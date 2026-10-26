@@ -1,0 +1,27 @@
+@model WebBarberia.Models.ReservaViewModel
+@{
+    ViewData["Title"] = "Tus datos";
+}
+<h1>Reserva tu cita</h1>
+<partial name="_Pasos" model="4" />
+<partial name="_Resumen" model="Model" />
+<p><a asp-action="Horario" asp-route-servicioId="@Model.ServicioId" asp-route-peluqueroId="@Model.PeluqueroId" asp-route-fecha="@Model.Fecha.ToString("yyyy-MM-dd")">cambiar fecha u hora</a></p>
+
+@if (Model.Errores.Count > 0)
+{
+    <div class="alert alert-danger"><ul class="mb-0">@foreach (var e in Model.Errores) { <li>@e</li> }</ul></div>
+}
+<form method="post" asp-action="Datos" class="formulario">
+    <partial name="_Ocultos" model="Model" />
+    <div class="fila">
+        <div><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" value="@Model.Nombre" class="form-control" maxlength="50" required /></div>
+        <div><label for="Apellido">Apellido</label><input id="Apellido" name="Apellido" value="@Model.Apellido" class="form-control" maxlength="50" required /></div>
+    </div>
+    <label for="Telefono">Teléfono / WhatsApp</label>
+    <input id="Telefono" name="Telefono" value="@Model.Telefono" class="form-control" placeholder="70000000" required />
+    <label for="Correo">Correo electrónico</label>
+    <input id="Correo" name="Correo" type="email" value="@Model.Correo" class="form-control" maxlength="100" required />
+    <label for="Notas">Notas (opcional)</label>
+    <textarea id="Notas" name="Notas" class="form-control" maxlength="200" rows="2">@Model.Notas</textarea>
+    <button type="submit" class="btn btn-dark mt-3">Continuar</button>
+</form>

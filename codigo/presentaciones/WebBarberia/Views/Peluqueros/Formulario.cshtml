@@ -1,0 +1,21 @@
+@model WebBarberia.Models.PeluqueroViewModel
+@{
+    bool nuevo = Model.Id == 0;
+    ViewData["Title"] = nuevo ? "Nuevo peluquero" : "Editar peluquero";
+    Layout = "_LayoutPanel";
+}
+<h1>@ViewData["Title"]</h1>
+<partial name="_Errores" model="Model.Errores" />
+<form method="post" asp-action="@(nuevo ? "Nuevo" : "Editar")" class="formulario">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="fila">
+        <div><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" value="@Model.Nombre" class="form-control" maxlength="50" required /></div>
+        <div><label for="Apellido">Apellido</label><input id="Apellido" name="Apellido" value="@Model.Apellido" class="form-control" maxlength="50" required /></div>
+    </div>
+    <label for="Especialidad">Especialidad (opcional)</label>
+    <input id="Especialidad" name="Especialidad" value="@Model.Especialidad" class="form-control" maxlength="60" placeholder="Cortes clásicos, degradados, barba..." />
+    <div class="acciones mt-3">
+        <button type="submit" class="btn btn-dark">Guardar</button>
+        <a class="btn btn-outline-dark" asp-action="Index">Volver</a>
+    </div>
+</form>

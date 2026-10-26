@@ -1,0 +1,22 @@
+@model List<Logica.Modelos.Servicio>
+@{
+    ViewData["Title"] = "Reserva tu cita";
+}
+<h1>Reserva tu cita</h1>
+<partial name="_Pasos" model="1" />
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+<h2 class="h5">¿Qué servicio deseas?</h2>
+<div class="servicios">
+    @foreach (var s in Model)
+    {
+        <a class="servicio" asp-action="ElegirPeluquero" asp-route-servicioId="@s.Id">
+            <strong>@s.Nombre</strong>
+            <small>@s.Descripcion</small>
+            <span>@s.DuracionMin min</span>
+            <span class="precio">Bs @s.Precio.ToString("0")</span>
+        </a>
+    }
+</div>

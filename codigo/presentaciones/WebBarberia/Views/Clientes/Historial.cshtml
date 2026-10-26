@@ -1,0 +1,41 @@
+@model List<Logica.Modelos.Reserva>
+@using Logica.Enumeraciones
+@{
+    Logica.Modelos.Cliente cliente = ViewBag.Cliente;
+    ViewData["Title"] = "Historial";
+    Layout = "_LayoutPanel";
+}
+<h1>Historial de @cliente.NombreCompleto</h1>
+<p class="text-muted">Teléfono @cliente.Telefono · @(cliente.Correo ?? "sin correo") · cliente desde @cliente.FechaRegistro.ToString("dd/MM/yyyy")</p>
+<div class="barra-agenda">
+    <a class="btn btn-outline-dark btn-sm" asp-action="Index">&larr; Clientes</a>
+    <a class="btn btn-dark btn-sm" asp-controller="Reservas" asp-action="Nueva" asp-route-clienteId="@cliente.Id">Nueva reserva</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">Este cliente todavía no tiene reservas.</p>
+}
+else
+{
+    int atendidas = Model.Count(r => r.Estado == EstadoReserva.Atendida);
+    decimal gastado = Model.Where(r => r.Estado == EstadoReserva.Atendida).Sum(r => r.Precio);
+    <p>@Model.Count reserva(s) · @atendidas atendida(s) · Bs @gastado.ToString("0.00") en servicios atendidos</p>
+    <table class="table table-sm align-middle agenda">
+        <thead><tr><th>Fecha</th><th>Hora</th><th>Servicio</th><th>Peluquero</th><th>Precio</th><th>Origen</th><th>Estado</th></tr></thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            <tr class="estado-@r.Estado">
+                <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@r.HoraInicio.ToString("HH:mm")-@r.HoraFin.ToString("HH:mm")</td>
+                <td>@r.Servicio.Nombre</td>
+                <td>@r.Peluquero.NombreCompleto</td>
+                <td>Bs @r.Precio.ToString("0.00")</td>
+                <td>@r.Origen</td>
+                <td><span class="estado">@(r.Estado == EstadoReserva.NoAsistio ? "No asistió" : r.Estado.ToString())</span></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

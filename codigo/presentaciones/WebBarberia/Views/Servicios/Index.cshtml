@@ -1,0 +1,38 @@
+@model List<Logica.Modelos.Servicio>
+@{
+    ViewData["Title"] = "Servicios";
+    Layout = "_LayoutPanel";
+}
+<h1>Servicios</h1>
+<div class="barra-agenda">
+    <a class="btn btn-dark btn-sm" asp-action="Nuevo">Nuevo servicio</a>
+</div>
+<partial name="_Mensajes" />
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No hay servicios registrados.</p>
+}
+else
+{
+    <table class="table table-sm align-middle">
+        <thead><tr><th>Servicio</th><th>Duración</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @foreach (var s in Model)
+        {
+            <tr class="@(s.Activo ? "" : "inactivo")">
+                <td><strong>@s.Nombre</strong><br /><small class="text-muted">@s.Descripcion</small></td>
+                <td>@s.DuracionMin min</td>
+                <td>Bs @s.Precio.ToString("0.00")</td>
+                <td>@(s.Activo ? "Activo" : "Inactivo")</td>
+                <td class="acciones-fila">
+                    <a class="btn btn-outline-dark btn-sm" asp-action="Editar" asp-route-id="@s.Id">Editar</a>
+                    <form method="post" asp-action="CambiarEstado" asp-route-id="@s.Id" asp-route-activo="@(!s.Activo)">
+                        <button class="btn btn-sm @(s.Activo ? "btn-outline-danger" : "btn-outline-success")">@(s.Activo ? "Desactivar" : "Activar")</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

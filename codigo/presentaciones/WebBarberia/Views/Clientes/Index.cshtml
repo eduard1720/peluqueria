@@ -1,0 +1,46 @@
+@model List<Logica.Modelos.Cliente>
+@{
+    ViewData["Title"] = "Clientes";
+    Layout = "_LayoutPanel";
+}
+<h1>Clientes</h1>
+<div class="barra-agenda">
+    <form method="get" asp-action="Index" class="d-flex gap-2">
+        <input type="search" name="buscar" value="@ViewBag.Buscar" class="form-control form-control-sm" placeholder="Nombre o teléfono" />
+        <button type="submit" class="btn btn-outline-dark btn-sm">Buscar</button>
+        @if (!string.IsNullOrWhiteSpace((string?)ViewBag.Buscar)) { <a class="btn btn-link btn-sm" asp-action="Index">Ver todos</a> }
+    </form>
+    <a class="btn btn-dark btn-sm" asp-action="Nuevo">Nuevo cliente</a>
+</div>
+<partial name="_Mensajes" />
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No se encontraron clientes.</p>
+}
+else
+{
+    <p class="text-muted small">@Model.Count cliente(s)</p>
+    <table class="table table-sm align-middle">
+        <thead><tr><th>Cliente</th><th>Teléfono</th><th>Correo</th><th>Registro</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.NombreCompleto</td>
+                <td>@c.Telefono</td>
+                <td>@(c.Correo ?? "—")</td>
+                <td>@c.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                <td class="acciones-fila">
+                    <a class="btn btn-outline-dark btn-sm" asp-action="Historial" asp-route-id="@c.Id">Historial</a>
+                    <a class="btn btn-outline-dark btn-sm" asp-action="Editar" asp-route-id="@c.Id">Editar</a>
+                    <a class="btn btn-outline-dark btn-sm" asp-controller="Reservas" asp-action="Nueva" asp-route-clienteId="@c.Id">Reservar</a>
+                    <form method="post" asp-action="Eliminar" asp-route-id="@c.Id">
+                        <button class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar a @c.NombreCompleto?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

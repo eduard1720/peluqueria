@@ -1,0 +1,14 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="text-danger">Ocurrió un error</h1>
+<p>No pudimos procesar tu solicitud. Intenta nuevamente en unos minutos.</p>
+
+@if (Model.ShowRequestId)
+{
+    <p class="text-muted small">Código de la solicitud: <code>@Model.RequestId</code></p>
+}
+
+<a class="btn btn-dark" asp-controller="Reservar" asp-action="Index">Volver al inicio</a>

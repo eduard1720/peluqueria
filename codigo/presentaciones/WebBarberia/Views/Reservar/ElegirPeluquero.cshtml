@@ -1,0 +1,23 @@
+@model List<Logica.Modelos.Peluquero>
+@{
+    ViewData["Title"] = "Elige tu peluquero";
+    Logica.Modelos.Servicio servicio = ViewBag.Servicio;
+}
+<h1>Reserva tu cita</h1>
+<partial name="_Pasos" model="2" />
+<p><strong>@servicio.Nombre</strong> · @servicio.DuracionMin min · Bs @servicio.Precio.ToString("0")
+    · <a asp-action="Index">cambiar servicio</a></p>
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-warning">@ViewBag.Error</div>
+}
+<h2 class="h5">¿Con quién quieres atenderte?</h2>
+<div class="servicios">
+    @foreach (var p in Model)
+    {
+        <a class="servicio" asp-action="Horario" asp-route-servicioId="@servicio.Id" asp-route-peluqueroId="@p.Id">
+            <strong>@p.NombreCompleto</strong>
+            @if (p.Especialidad != "") { <small>@p.Especialidad</small> }
+        </a>
+    }
+</div>

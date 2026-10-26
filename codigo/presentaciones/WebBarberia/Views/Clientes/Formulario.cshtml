@@ -1,0 +1,23 @@
+@model WebBarberia.Models.ClienteViewModel
+@{
+    bool nuevo = Model.Id == 0;
+    ViewData["Title"] = nuevo ? "Nuevo cliente" : "Editar cliente";
+    Layout = "_LayoutPanel";
+}
+<h1>@ViewData["Title"]</h1>
+<partial name="_Errores" model="Model.Errores" />
+<form method="post" asp-action="@(nuevo ? "Nuevo" : "Editar")" class="formulario">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="fila">
+        <div><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" value="@Model.Nombre" class="form-control" maxlength="50" required /></div>
+        <div><label for="Apellido">Apellido</label><input id="Apellido" name="Apellido" value="@Model.Apellido" class="form-control" maxlength="50" required /></div>
+    </div>
+    <label for="Telefono">Teléfono</label>
+    <input id="Telefono" name="Telefono" value="@Model.Telefono" class="form-control" placeholder="70000000" required />
+    <label for="Correo">Correo electrónico (opcional)</label>
+    <input id="Correo" name="Correo" type="email" value="@Model.Correo" class="form-control" maxlength="100" />
+    <div class="acciones mt-3">
+        <button type="submit" class="btn btn-dark">Guardar</button>
+        <a class="btn btn-outline-dark" asp-action="Index">Volver</a>
+    </div>
+</form>

@@ -1,0 +1,52 @@
+@model WebBarberia.Models.UsuarioViewModel
+@using Logica.Enumeraciones
+@{
+    bool nuevo = Model.Id == 0;
+    ViewData["Title"] = nuevo ? "Nuevo usuario" : "Editar usuario";
+    Layout = "_LayoutPanel";
+}
+<h1>@ViewData["Title"]</h1>
+<partial name="_Errores" model="Model.Errores" />
+<form method="post" asp-action="@(nuevo ? "Nuevo" : "Editar")" class="formulario">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="fila">
+        <div><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" value="@Model.Nombre" class="form-control" maxlength="50" required /></div>
+        <div><label for="Apellido">Apellido</label><input id="Apellido" name="Apellido" value="@Model.Apellido" class="form-control" maxlength="50" required /></div>
+    </div>
+    <label for="NombreUsuario">Usuario</label>
+    @if (nuevo)
+    {
+        <input id="NombreUsuario" name="NombreUsuario" value="@Model.NombreUsuario" class="form-control" maxlength="20" autocomplete="off" required />
+    }
+    else
+    {
+        <input id="NombreUsuario" value="@Model.NombreUsuario" class="form-control" disabled />
+        <input type="hidden" name="NombreUsuario" value="@Model.NombreUsuario" />
+    }
+    <label for="Contrasena">@(nuevo ? "Contraseña" : "Nueva contraseña (vacía = no cambiar)")</label>
+    <input id="Contrasena" name="Contrasena" type="password" class="form-control" autocomplete="new-password" @(nuevo ? "required" : "") />
+    <small class="text-muted">Al menos 8 caracteres, con letras y números.</small>
+    <div class="fila mt-2">
+        <div>
+            <label for="Rol">Rol</label>
+            <select id="Rol" name="Rol" class="form-select">
+                @foreach (Rol r in Enum.GetValues<Rol>())
+                {
+                    <option value="@r" selected="@(r == Model.Rol)">@r</option>
+                }
+            </select>
+        </div>
+        @if (!nuevo)
+        {
+            <div class="form-check mt-4">
+                <input id="Activo" name="Activo" type="checkbox" value="true" class="form-check-input" checked="@Model.Activo" />
+                <input type="hidden" name="Activo" value="false" />
+                <label for="Activo" class="form-check-label">Cuenta activa</label>
+            </div>
+        }
+    </div>
+    <div class="acciones mt-3">
+        <button type="submit" class="btn btn-dark">Guardar</button>
+        <a class="btn btn-outline-dark" asp-action="Index">Volver</a>
+    </div>
+</form>

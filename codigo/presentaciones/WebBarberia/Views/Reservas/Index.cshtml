@@ -1,0 +1,77 @@
+@model List<Logica.Modelos.Reserva>
+@using Logica.Enumeraciones
+@{
+    ViewData["Title"] = "Reservas";
+    Layout = "_LayoutPanel";
+    DateOnly desde = ViewBag.Desde;
+    DateOnly hasta = ViewBag.Hasta;
+    EstadoReserva? estado = ViewBag.Estado;
+    int? peluqueroId = ViewBag.PeluqueroId;
+    List<Logica.Modelos.Peluquero> peluqueros = ViewBag.Peluqueros;
+    string d = desde.ToString("yyyy-MM-dd"), h = hasta.ToString("yyyy-MM-dd");
+}
+<h1>Reservas</h1>
+<form method="get" asp-action="Index" class="barra-agenda">
+    <label for="desde">Desde</label>
+    <input type="date" id="desde" name="desde" value="@d" class="form-control form-control-sm w-auto" />
+    <label for="hasta">Hasta</label>
+    <input type="date" id="hasta" name="hasta" value="@h" class="form-control form-control-sm w-auto" />
+    <select name="estado" class="form-select form-select-sm w-auto">
+        <option value="">Todos los estados</option>
+        @foreach (EstadoReserva e in Enum.GetValues<EstadoReserva>())
+        {
+            <option value="@e" selected="@(e == estado)">@(e == EstadoReserva.NoAsistio ? "No asistió" : e.ToString())</option>
+        }
+    </select>
+    <select name="peluqueroId" class="form-select form-select-sm w-auto">
+        <option value="">Todos los peluqueros</option>
+        @foreach (var p in peluqueros)
+        {
+            <option value="@p.Id" selected="@(p.Id == peluqueroId)">@p.NombreCompleto</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-outline-dark btn-sm">Filtrar</button>
+    <a class="btn btn-dark btn-sm" asp-action="Nueva">Nueva reserva</a>
+</form>
+<partial name="_Mensajes" />
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No hay reservas en este rango.</p>
+}
+else
+{
+    <p class="text-muted small">@Model.Count reserva(s)</p>
+    <table class="table table-sm align-middle agenda">
+        <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Servicio</th><th>Peluquero</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            <tr class="estado-@r.Estado">
+                <td>@r.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@r.HoraInicio.ToString("HH:mm")-@r.HoraFin.ToString("HH:mm")</td>
+                <td>@r.Cliente.NombreCompleto<br /><small class="text-muted">@r.Cliente.Telefono</small></td>
+                <td>@r.Servicio.Nombre</td>
+                <td>@r.Peluquero.NombreCompleto</td>
+                <td>Bs @r.Precio.ToString("0.00")</td>
+                <td><span class="estado">@(r.Estado == EstadoReserva.NoAsistio ? "No asistió" : r.Estado.ToString())</span></td>
+                <td>
+                    @if (r.Estado == EstadoReserva.Confirmada)
+                    {
+                        <form method="post" asp-action="CambiarEstado" class="acciones-fila">
+                            <input type="hidden" name="id" value="@r.Id" />
+                            <input type="hidden" name="desde" value="@d" /><input type="hidden" name="hasta" value="@h" />
+                            <input type="hidden" name="peluqueroId" value="@peluqueroId" />
+                            <a class="btn btn-outline-dark btn-sm" asp-action="Reprogramar" asp-route-id="@r.Id">Reprogramar</a>
+                            <button name="estado" value="Atendida" class="btn btn-success btn-sm">Atendida</button>
+                            <button name="estado" value="NoAsistio" class="btn btn-secondary btn-sm">No asistió</button>
+                            <button name="estado" value="Cancelada" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

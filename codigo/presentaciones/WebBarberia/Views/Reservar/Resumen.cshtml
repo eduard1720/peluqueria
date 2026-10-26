@@ -1,0 +1,33 @@
+@model WebBarberia.Models.ReservaViewModel
+@{
+    ViewData["Title"] = "Confirmar";
+}
+<h1>Reserva tu cita</h1>
+<partial name="_Pasos" model="5" />
+<h2 class="h5">Revisa tu reserva</h2>
+<partial name="_Resumen" model="Model" />
+<div class="resumen">
+    <div><span>Cliente</span><strong>@Model.Nombre @Model.Apellido</strong></div>
+    <div><span>Teléfono</span><strong>@Model.Telefono</strong></div>
+    <div><span>Correo</span><strong>@Model.Correo</strong></div>
+    @if (!string.IsNullOrWhiteSpace(Model.Notas))
+    {
+        <div><span>Notas</span><strong>@Model.Notas</strong></div>
+    }
+</div>
+<div class="acciones">
+    <form method="post" asp-action="Editar">
+        <partial name="_Ocultos" model="Model" />
+        <input type="hidden" name="Nombre" value="@Model.Nombre" /><input type="hidden" name="Apellido" value="@Model.Apellido" />
+        <input type="hidden" name="Telefono" value="@Model.Telefono" /><input type="hidden" name="Correo" value="@Model.Correo" />
+        <input type="hidden" name="Notas" value="@Model.Notas" />
+        <button type="submit" class="btn btn-outline-dark">Editar</button>
+    </form>
+    <form method="post" asp-action="Confirmar">
+        <partial name="_Ocultos" model="Model" />
+        <input type="hidden" name="Nombre" value="@Model.Nombre" /><input type="hidden" name="Apellido" value="@Model.Apellido" />
+        <input type="hidden" name="Telefono" value="@Model.Telefono" /><input type="hidden" name="Correo" value="@Model.Correo" />
+        <input type="hidden" name="Notas" value="@Model.Notas" />
+        <button type="submit" class="btn btn-dark">Confirmar reserva</button>
+    </form>
+</div>

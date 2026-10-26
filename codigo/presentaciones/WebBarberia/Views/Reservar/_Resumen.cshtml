@@ -1,0 +1,8 @@
+@model WebBarberia.Models.ReservaViewModel
+<div class="resumen">
+    <div><span>Servicio</span><strong>@Model.Servicio?.Nombre</strong></div>
+    <div><span>Peluquero</span><strong>@Model.Peluquero?.NombreCompleto</strong></div>
+    <div><span>Fecha</span><strong>@Model.Fecha.ToString("dd/MM/yyyy")</strong></div>
+    <div><span>Hora</span><strong>@Model.Hora.ToString("HH:mm") a @Model.Hora.AddMinutes(Model.Servicio?.DuracionMin ?? 0).ToString("HH:mm")</strong></div>
+    <div><span>Precio</span><strong>Bs @Model.Servicio?.Precio.ToString("0.00")</strong></div>
+</div>

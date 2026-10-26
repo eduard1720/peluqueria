@@ -1,0 +1,13 @@
+@model WebBarberia.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Acceso del personal";
+}
+<h1>Acceso del personal</h1>
+<form asp-action="Login" method="post" class="login">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <label asp-for="Usuario">Usuario</label>
+    <input asp-for="Usuario" class="form-control" autocomplete="username" />
+    <label asp-for="Contrasena">Contraseña</label>
+    <input asp-for="Contrasena" class="form-control" autocomplete="current-password" />
+    <button type="submit" class="btn btn-dark mt-3">Iniciar sesión</button>
+</form>

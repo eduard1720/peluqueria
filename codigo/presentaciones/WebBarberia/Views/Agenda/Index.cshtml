@@ -1,0 +1,73 @@
+@model List<Logica.Modelos.Reserva>
+@using Logica.Enumeraciones
+@{
+    ViewData["Title"] = "Agenda";
+    Layout = "_LayoutPanel";
+    DateOnly fecha = ViewBag.Fecha;
+    string f = fecha.ToString("yyyy-MM-dd");
+    int? peluqueroId = ViewBag.PeluqueroId;
+    List<Logica.Modelos.Peluquero> peluqueros = ViewBag.Peluqueros;
+}
+<h1>Agenda del @fecha.ToString("dd/MM/yyyy")</h1>
+<div class="barra-agenda">
+    <a class="btn btn-outline-dark btn-sm" asp-action="Index" asp-route-fecha="@fecha.AddDays(-1).ToString("yyyy-MM-dd")" asp-route-peluqueroId="@peluqueroId">&larr; Anterior</a>
+    <form method="get" asp-action="Index" class="barra-agenda mb-0">
+        <input type="date" name="fecha" value="@f" class="form-control form-control-sm" onchange="this.form.submit()" />
+        <select name="peluqueroId" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            <option value="">Todos los peluqueros</option>
+            @foreach (var p in peluqueros)
+            {
+                <option value="@p.Id" selected="@(p.Id == peluqueroId)">@p.NombreCompleto</option>
+            }
+        </select>
+    </form>
+    <a class="btn btn-outline-dark btn-sm" asp-action="Index" asp-route-fecha="@fecha.AddDays(1).ToString("yyyy-MM-dd")" asp-route-peluqueroId="@peluqueroId">Siguiente &rarr;</a>
+    <a class="btn btn-dark btn-sm" asp-action="Exportar" asp-route-fecha="@f" asp-route-peluqueroId="@peluqueroId">Exportar .txt</a>
+    <a class="btn btn-dark btn-sm" asp-controller="Reservas" asp-action="Nueva" asp-route-fecha="@f" asp-route-peluqueroId="@peluqueroId">Nueva reserva</a>
+</div>
+@if (ViewBag.Error != null) { <div class="alert alert-danger">@ViewBag.Error</div> }
+@if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+@if (TempData["Exito"] != null) { <div class="alert alert-success">@TempData["Exito"]</div> }
+
+@if (Model.Count == 0)
+{
+    <p class="text-muted">No hay reservas para este día.</p>
+}
+else
+{
+    <table class="table table-sm align-middle agenda">
+        <thead><tr><th>Hora</th><th>Cliente</th><th>Teléfono</th><th>Servicio</th><th>Peluquero</th><th>Precio</th><th>Origen</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @foreach (var r in Model)
+        {
+            <tr class="estado-@r.Estado">
+                <td>@r.HoraInicio.ToString("HH:mm")-@r.HoraFin.ToString("HH:mm")</td>
+                <td>@r.Cliente.NombreCompleto
+                    @if (!string.IsNullOrWhiteSpace(r.Notas)) { <br /><small class="text-muted">@r.Notas</small> }
+                    @if (r.CorreoEnviado == false) { <br /><small class="text-danger">correo no enviado</small> }
+                </td>
+                <td>@r.Cliente.Telefono</td>
+                <td>@r.Servicio.Nombre</td>
+                <td>@r.Peluquero.NombreCompleto</td>
+                <td>Bs @r.Precio.ToString("0.00")</td>
+                <td>@r.Origen</td>
+                <td><span class="estado">@(r.Estado == EstadoReserva.NoAsistio ? "No asistió" : r.Estado.ToString())</span></td>
+                <td>
+                    @if (r.Estado == EstadoReserva.Confirmada)
+                    {
+                        <form method="post" asp-action="CambiarEstado" class="acciones-fila">
+                            <input type="hidden" name="id" value="@r.Id" /><input type="hidden" name="fecha" value="@f" />
+                            <input type="hidden" name="peluqueroId" value="@peluqueroId" />
+                            <a class="btn btn-outline-dark btn-sm" asp-controller="Reservas" asp-action="Reprogramar" asp-route-id="@r.Id">Reprogramar</a>
+                            <button name="estado" value="Atendida" class="btn btn-success btn-sm">Atendida</button>
+                            <button name="estado" value="NoAsistio" class="btn btn-secondary btn-sm">No asistió</button>
+                            <button name="estado" value="Cancelada" class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('¿Cancelar esta reserva?')">Cancelar</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

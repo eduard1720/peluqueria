@@ -1,0 +1,41 @@
+@model WebBarberia.Models.HorarioViewModel
+@{
+    ViewData["Title"] = "Fecha y hora";
+}
+<h1>Reserva tu cita</h1>
+<partial name="_Pasos" model="3" />
+<p><strong>@Model.Servicio.Nombre</strong> · @Model.Servicio.DuracionMin min · Bs @Model.Servicio.Precio.ToString("0")
+    · <a asp-action="Index">cambiar servicio</a></p>
+<p>Peluquero: <strong>@Model.Peluquero.NombreCompleto</strong>
+    @if (Model.HayVariosPeluqueros) { <text>· <a asp-action="ElegirPeluquero" asp-route-servicioId="@Model.Servicio.Id">cambiar peluquero</a></text> }</p>
+
+<form method="get" asp-action="Horario" class="elegir-fecha">
+    <input type="hidden" name="servicioId" value="@Model.Servicio.Id" />
+    <input type="hidden" name="peluqueroId" value="@Model.Peluquero.Id" />
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha" name="fecha" class="form-control" value="@Model.Fecha.ToString("yyyy-MM-dd")"
+           min="@Model.Hoy.ToString("yyyy-MM-dd")" max="@Model.Hoy.AddDays(Logica.Modelos.HorarioAtencion.DiasMaximos).ToString("yyyy-MM-dd")"
+           onchange="this.form.submit()" />
+    <noscript><button type="submit" class="btn btn-dark">Ver horarios</button></noscript>
+</form>
+
+<h2 class="h5 mt-4">Horarios del @Model.Fecha.ToString("dd/MM/yyyy")</h2>
+@if (Model.Mensaje != null)
+{
+    <div class="alert alert-warning">@Model.Mensaje</div>
+}
+<div class="bloques">
+    @foreach (var h in Model.Bloques)
+    {
+        if (Model.Disponibles.Contains(h))
+        {
+            <a class="bloque" asp-action="Datos" asp-route-servicioId="@Model.Servicio.Id" asp-route-peluqueroId="@Model.Peluquero.Id"
+               asp-route-fecha="@Model.Fecha.ToString("yyyy-MM-dd")" asp-route-hora="@h.ToString("HH:mm")">@h.ToString("HH:mm")</a>
+        }
+        else
+        {
+            <span class="bloque ocupado">@h.ToString("HH:mm")</span>
+        }
+    }
+</div>
+<p class="text-muted mt-2 small">Los horarios tachados están ocupados para este peluquero o no alcanzan para la duración del servicio.</p>

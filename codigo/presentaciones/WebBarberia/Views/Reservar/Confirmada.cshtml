@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "¡Cita confirmada!";
+}
+<div class="confirmada">
+    <h1>¡Cita confirmada!</h1>
+    <p>Gracias, @TempData["Cliente"]. Te esperamos.</p>
+    <div class="resumen">
+        <div><span>Servicio</span><strong>@TempData["Servicio"]</strong></div>
+        <div><span>Peluquero</span><strong>@TempData["Peluquero"]</strong></div>
+        <div><span>Fecha</span><strong>@TempData["Fecha"]</strong></div>
+        <div><span>Hora</span><strong>@TempData["Hora"]</strong></div>
+        <div><span>Precio</span><strong>Bs @TempData["Precio"]</strong></div>
+    </div>
+    @if ((bool?)TempData["CorreoEnviado"] == true)
+    {
+        <p>Te enviamos la confirmación a tu correo.</p>
+    }
+    else
+    {
+        <p class="text-muted">Tu cita quedó registrada. Si no recibes el correo, la barbería se comunicará contigo.</p>
+    }
+    <a class="btn btn-dark" asp-action="Index">Reservar otra cita</a>
+</div>

@@ -1,0 +1,31 @@
+@model List<Logica.Modelos.Usuario>
+@{
+    ViewData["Title"] = "Usuarios";
+    Layout = "_LayoutPanel";
+    int idSesion = ViewBag.IdSesion;
+    DateTime ahora = Logica.Utilidades.Reloj.AhoraBolivia();
+}
+<h1>Usuarios del personal</h1>
+<div class="barra-agenda">
+    <a class="btn btn-dark btn-sm" asp-action="Nuevo">Nuevo usuario</a>
+</div>
+<partial name="_Mensajes" />
+
+<table class="table table-sm align-middle">
+    <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var u in Model)
+    {
+        <tr class="@(u.Activo ? "" : "inactivo")">
+            <td>@u.NombreCompleto @if (u.Id == idSesion) { <small class="text-muted">(tú)</small> }</td>
+            <td>@u.NombreUsuario</td>
+            <td>@u.Rol</td>
+            <td>
+                @(u.Activo ? "Activo" : "Inactivo")
+                @if (u.EstaBloqueado(ahora)) { <br /><small class="text-danger">bloqueado hasta @u.BloqueadoHasta?.ToString("HH:mm")</small> }
+            </td>
+            <td><a class="btn btn-outline-dark btn-sm" asp-action="Editar" asp-route-id="@u.Id">Editar</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

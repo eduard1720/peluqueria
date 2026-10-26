@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/logica/">
+    <Project Path="logica/Logica.csproj" />
+  </Folder>
+  <Folder Name="/presentaciones/">
+    <Project Path="presentaciones/WebBarberia/WebBarberia.csproj" />
+  </Folder>
+  <Folder Name="/pruebas/">
+    <Project Path="pruebas/Logica.Pruebas/Logica.Pruebas.csproj" />
+  </Folder>
+</Solution>

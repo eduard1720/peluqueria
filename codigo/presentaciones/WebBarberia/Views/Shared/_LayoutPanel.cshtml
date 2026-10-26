@@ -1,0 +1,41 @@
+@{
+    bool esAdmin = User.IsInRole("Administrador");
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Panel · As bajo la manga</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="panel">
+    <!-- Menú principal: menú lateral según el rol (RF-08) -->
+    <nav class="menu-lateral">
+        <div class="marca">As bajo la manga</div>
+        <div class="usuario">@User.Identity?.Name</div>
+        <a asp-controller="Agenda" asp-action="Index">Agenda</a>
+        <a asp-controller="Reservas" asp-action="Index">Reservas</a>
+        <a asp-controller="Clientes" asp-action="Index">Clientes</a>
+        @if (esAdmin)
+        {
+            <div class="separador">Administrador</div>
+            <a asp-controller="Servicios" asp-action="Index">Servicios</a>
+            <a asp-controller="Peluqueros" asp-action="Index">Peluqueros</a>
+            <a asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+            <a asp-controller="Reportes" asp-action="Index">Reportes</a>
+            <a asp-controller="Errores" asp-action="Index">Registro de errores</a>
+        }
+        <form asp-controller="Cuenta" asp-action="Logout" method="post">
+            <button type="submit" class="salir">Cerrar sesión</button>
+        </form>
+    </nav>
+    <main class="contenido-panel">
+        @RenderBody()
+    </main>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

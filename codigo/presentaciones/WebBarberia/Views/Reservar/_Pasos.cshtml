@@ -1,0 +1,10 @@
+@model int
+@{
+    string[] nombres = { "Servicio", "Peluquero", "Fecha y hora", "Tus datos", "Confirmar" };
+}
+<ol class="pasos">
+    @for (int i = 0; i < nombres.Length; i++)
+    {
+        <li class="@(i + 1 == Model ? "activo" : (i + 1 < Model ? "hecho" : ""))">@nombres[i]</li>
+    }
+</ol>

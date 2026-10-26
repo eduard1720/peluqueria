@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - As bajo la manga</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="cabecera">
+        <a class="marca" asp-controller="Reservar" asp-action="Index">As bajo la manga</a>
+        <span class="lema">Barbería · Reserva tu cita en minutos</span>
+    </header>
+    <main class="contenido">
+        @RenderBody()
+    </main>
+    <footer class="pie">
+        © 2026 As bajo la manga · <a asp-controller="Cuenta" asp-action="Login">Acceso del personal</a>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

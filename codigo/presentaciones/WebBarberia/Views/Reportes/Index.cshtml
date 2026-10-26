@@ -1,0 +1,74 @@
+@model Logica.Modelos.Reporte?
+@using Logica.Enumeraciones
+@{
+    ViewData["Title"] = "Reportes";
+    Layout = "_LayoutPanel";
+    DateOnly desde = ViewBag.Desde;
+    DateOnly hasta = ViewBag.Hasta;
+}
+<h1>Reportes</h1>
+<form method="get" asp-action="Index" class="barra-agenda">
+    <label for="desde">Desde</label>
+    <input type="date" id="desde" name="desde" value="@desde.ToString("yyyy-MM-dd")" class="form-control form-control-sm w-auto" />
+    <label for="hasta">Hasta</label>
+    <input type="date" id="hasta" name="hasta" value="@hasta.ToString("yyyy-MM-dd")" class="form-control form-control-sm w-auto" />
+    <button type="submit" class="btn btn-outline-dark btn-sm">Generar</button>
+    @if (Model != null)
+    {
+        <a class="btn btn-dark btn-sm" asp-action="Exportar" asp-route-desde="@desde.ToString("yyyy-MM-dd")" asp-route-hasta="@hasta.ToString("yyyy-MM-dd")">Exportar .txt</a>
+    }
+</form>
+<partial name="_Mensajes" />
+
+@if (Model != null)
+{
+    <div class="tarjetas">
+        <div><span>Total de citas</span><strong>@Model.Total</strong></div>
+        <div><span>Ingreso real (atendidas)</span><strong>Bs @Model.IngresoReal.ToString("0.00")</strong></div>
+        <div><span>Ingreso estimado (por venir)</span><strong>Bs @Model.IngresoEstimado.ToString("0.00")</strong></div>
+        <div><span>Pasadas sin marcar</span><strong>@Model.SinMarcar</strong></div>
+    </div>
+
+    <div class="reporte">
+        <section>
+            <h2 class="h6">Citas por estado</h2>
+            <table class="table table-sm">
+                @foreach (var par in Model.CitasPorEstado)
+                {
+                    <tr><td>@(par.Key == EstadoReserva.NoAsistio ? "No asistió" : par.Key.ToString())</td><td class="text-end">@par.Value</td></tr>
+                }
+            </table>
+        </section>
+        <section>
+            <h2 class="h6">Servicios más solicitados <small class="text-muted">(burbuja, mayor a menor)</small></h2>
+            @if (Model.ServiciosOrdenados.Count == 0) { <p class="text-muted small">Sin datos.</p> }
+            <table class="table table-sm">
+                @foreach (var c in Model.ServiciosOrdenados)
+                {
+                    <tr><td>@c.Servicio</td><td class="text-end">@c.Cantidad</td></tr>
+                }
+            </table>
+        </section>
+        <section>
+            <h2 class="h6">Por peluquero <small class="text-muted">(citas · ingreso real)</small></h2>
+            @if (Model.CitasPorPeluquero.Count == 0) { <p class="text-muted small">Sin datos.</p> }
+            <table class="table table-sm">
+                @foreach (var par in Model.CitasPorPeluquero)
+                {
+                    <tr><td>@par.Key</td><td class="text-end">@par.Value</td>
+                        <td class="text-end">Bs @Model.IngresoPorPeluquero.GetValueOrDefault(par.Key).ToString("0.00")</td></tr>
+                }
+            </table>
+        </section>
+        <section>
+            <h2 class="h6">Citas por día</h2>
+            @if (Model.CitasPorDia.Count == 0) { <p class="text-muted small">Sin datos.</p> }
+            <table class="table table-sm">
+                @foreach (var par in Model.CitasPorDia)
+                {
+                    <tr><td>@par.Key.ToString("dd/MM/yyyy")</td><td class="text-end">@par.Value</td></tr>
+                }
+            </table>
+        </section>
+    </div>
+}

@@ -1,0 +1,85 @@
+@model WebBarberia.Models.ReservaManualViewModel
+@{
+    ViewData["Title"] = "Nueva reserva";
+    Layout = "_LayoutPanel";
+    var servicio = Model.Servicios.Find(s => s.Id == Model.ServicioId);
+    var peluquero = Model.Peluqueros.Find(p => p.Id == Model.PeluqueroId);
+}
+<h1>Nueva reserva manual</h1>
+<partial name="_Errores" model="Model.Errores" />
+
+@* 1) Servicio, peluquero y fecha: al cambiarlos se recalculan los horarios libres de ese peluquero (A1, origen Manual). *@
+<form method="get" asp-action="Nueva" class="formulario mb-3">
+    @if (Model.ClienteId.HasValue) { <input type="hidden" name="clienteId" value="@Model.ClienteId" /> }
+    <div class="fila">
+        <div>
+            <label for="servicioId">Servicio</label>
+            <select id="servicioId" name="servicioId" class="form-select" onchange="this.form.submit()">
+                <option value="0">Elige un servicio</option>
+                @foreach (var s in Model.Servicios)
+                {
+                    <option value="@s.Id" selected="@(s.Id == Model.ServicioId)">@s.Nombre · @s.DuracionMin min · Bs @s.Precio.ToString("0")</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label for="peluqueroId">Peluquero</label>
+            <select id="peluqueroId" name="peluqueroId" class="form-select" onchange="this.form.submit()">
+                <option value="0">Elige un peluquero</option>
+                @foreach (var p in Model.Peluqueros)
+                {
+                    <option value="@p.Id" selected="@(p.Id == Model.PeluqueroId)">@p.NombreCompleto</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="fila">
+        <div>
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" class="form-control" value="@Model.Fecha.ToString("yyyy-MM-dd")"
+                   min="@Model.Hoy.ToString("yyyy-MM-dd")" max="@Model.Hoy.AddDays(Logica.Modelos.HorarioAtencion.DiasMaximos).ToString("yyyy-MM-dd")"
+                   onchange="this.form.submit()" />
+        </div>
+    </div>
+    <noscript><button type="submit" class="btn btn-outline-dark mt-2">Ver horarios</button></noscript>
+</form>
+
+@if (servicio != null && peluquero != null)
+{
+    @if (Model.Disponibles.Count == 0)
+    {
+        <div class="alert alert-warning">@peluquero.NombreCompleto no tiene horarios disponibles para esta fecha.</div>
+    }
+    else
+    {
+        @* 2) Horario y datos del cliente: A2 con origen Manual (el correo es opcional). *@
+        <form method="post" asp-action="Nueva" class="formulario">
+            <input type="hidden" name="ServicioId" value="@Model.ServicioId" />
+            <input type="hidden" name="PeluqueroId" value="@Model.PeluqueroId" />
+            <input type="hidden" name="Fecha" value="@Model.Fecha.ToString("yyyy-MM-dd")" />
+            <label for="Hora">Horario</label>
+            <select id="Hora" name="Hora" class="form-select" required>
+                <option value="">Elige la hora</option>
+                @foreach (var h in Model.Disponibles)
+                {
+                    <option value="@h.ToString("HH:mm")" selected="@(h == Model.Hora)">@h.ToString("HH:mm") a @h.AddMinutes(servicio.DuracionMin).ToString("HH:mm")</option>
+                }
+            </select>
+            <div class="fila">
+                <div><label for="Nombre">Nombre</label><input id="Nombre" name="Nombre" value="@Model.Nombre" class="form-control" maxlength="50" required /></div>
+                <div><label for="Apellido">Apellido</label><input id="Apellido" name="Apellido" value="@Model.Apellido" class="form-control" maxlength="50" required /></div>
+            </div>
+            <label for="Telefono">Teléfono</label>
+            <input id="Telefono" name="Telefono" value="@Model.Telefono" class="form-control" placeholder="70000000" required />
+            <small class="text-muted">Si el teléfono ya existe, se usa ese cliente y se actualizan sus datos.</small>
+            <label for="Correo">Correo electrónico (opcional)</label>
+            <input id="Correo" name="Correo" type="email" value="@Model.Correo" class="form-control" maxlength="100" />
+            <label for="Notas">Notas (opcional)</label>
+            <textarea id="Notas" name="Notas" class="form-control" maxlength="200" rows="2">@Model.Notas</textarea>
+            <div class="acciones mt-3">
+                <button type="submit" class="btn btn-dark">Registrar reserva</button>
+                <a class="btn btn-outline-dark" asp-action="Index">Volver</a>
+            </div>
+        </form>
+    }
+}
